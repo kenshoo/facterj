@@ -1,3 +1,18 @@
+/*
+* Copyright 2012 Kenshoo.com
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.kenshoo.facts;
 
 import com.google.gson.Gson;
@@ -21,8 +36,8 @@ public class FactsToJsonFileTest {
     @Test
     public void writeFactsFile() throws Exception {
         HashMap<String, String> props = new HashMap<String, String>();
-        props.put("Alon", "Levi");
-        props.put("Tzach", "Zohar");
+        props.put("Bar", "Refaeli");
+        props.put("Hanin", "Zuabi");
 
         FactsToJsonFile factsToJsonFile = new FactsToJsonFile();
 
@@ -30,38 +45,38 @@ public class FactsToJsonFileTest {
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
-        Assert.assertEquals("Fact is different", factsFromFile.get("Alon"), "Levi");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Tzach"), "Zohar");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Bar"), "Refaeli");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zuabi");
     }
 
     @Test
     public void writeFactsFileAndOverideIt() throws Exception {
         HashMap<String, String> props = new HashMap<String, String>();
-        props.put("Alon", "Levi");
-        props.put("Tzach", "Zohar");
+        props.put("Bar", "Refaeli");
+        props.put("Hanin", "Zuabi");
         FactsToJsonFile factsToJsonFile = new FactsToJsonFile();
         factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, FACTS_LOCATION);
 
         props.clear();
-        props.put("Tal", "Salmona");
-        props.put("Matti", "Bar-Zeev");
-        props.put("Levi", "Alon");
+        props.put("Catherine", "McNeil");
+        props.put("Iris", "Strubegger");
+        props.put("Karen", "Elson");
 
         String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, FACTS_LOCATION));
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 3);
-        Assert.assertEquals("Fact is different", factsFromFile.get("Levi"), "Alon");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Matti"), "Bar-Zeev");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Tal"), "Salmona");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Iris"), "Strubegger");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Catherine"), "McNeil");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Karen"), "Elson");
     }
 
     @Test
     public void writeFactsFileToMainLocation() throws Exception {
         MAIN_LOCATION.mkdirs();
         HashMap<String, String> props = new HashMap<String, String>();
-        props.put("Alon", "Levi");
-        props.put("Tzach", "Zohar");
+        props.put("Bar", "Refaeli");
+        props.put("Hanin", "Zuabi");
 
         FactsToJsonFile factsToJsonFile = prepareMock(props);
 
@@ -71,8 +86,8 @@ public class FactsToJsonFileTest {
 
         Assert.assertEquals(factsFile.getParentFile().getAbsoluteFile(), MAIN_LOCATION.getAbsoluteFile());
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
-        Assert.assertEquals("Fact is different", factsFromFile.get("Alon"), "Levi");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Tzach"), "Zohar");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Bar"), "Refaeli");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zuabi");
 
     }
 
@@ -88,8 +103,8 @@ public class FactsToJsonFileTest {
     public void writeFactsFileToAlternativeLocation() throws Exception {
         ALTERNATIVE_LOCATION.mkdirs();
         HashMap<String, String> props = new HashMap<String, String>();
-        props.put("Alon", "Levi");
-        props.put("Tzach", "Zohar");
+        props.put("Bar", "Refaeli");
+        props.put("Hanin", "Zuabi");
 
         FactsToJsonFile factsToJsonFile = prepareMock(props);
 
@@ -99,14 +114,14 @@ public class FactsToJsonFileTest {
 
         Assert.assertEquals(factsFile.getParentFile().getAbsoluteFile(), ALTERNATIVE_LOCATION.getAbsoluteFile());
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
-        Assert.assertEquals("Fact is different", factsFromFile.get("Alon"), "Levi");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Tzach"), "Zohar");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Bar"), "Refaeli");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zuabi");
 
     }
 
     @After
     public void afterEachTest() {
-        FileUtils.deleteQuietly(new File("." + File.separator + PROPS_FILE_NAME));
+        FileUtils.deleteQuietly(new File("." + File.separator + PROPS_FILE_NAME + FactsToJsonFile.JSON_FILE_EXTENSION));
         FileUtils.deleteQuietly(MAIN_LOCATION);
         FileUtils.deleteQuietly(ALTERNATIVE_LOCATION);
     }
