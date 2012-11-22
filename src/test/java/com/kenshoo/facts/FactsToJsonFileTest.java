@@ -77,7 +77,7 @@ public class FactsToJsonFileTest {
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 3);
         Assert.assertEquals("Fact is different", factsFromFile.get("Monkey"), "Gorilla");
         Assert.assertEquals("Fact is different", factsFromFile.get("Fish"), "Jawless");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Snake"), "Manmba");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Snake"), "Mamba");
         verify(factsToJsonFile, times(2)).getExternalFactsFolder();
         verify(factsToJsonFile, times(2)).toJsonFileFromMapFacts(any(HashMap.class), same(FACTS_JSON_FILE_NAME));
     }
