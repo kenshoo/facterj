@@ -13,34 +13,37 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-apply plugin: 'groovy'
-
-dependencies {
-    compile gradleApi()
-    groovy localGroovy()
-}
-
+apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'maven'
+
+group = 'com.kenshoo.facterj'
+version = '0.1'
+
 buildscript {
     repositories {
         mavenCentral()
     }
-
-    dependencies {
-        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
-    }
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
-    testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+  compile 'com.google.code.gson:gson:2.2.2'
+  compile 'org.slf4j:slf4j-api:1.6.4'
+  compile 'junit:junit-dep:4.8.2'
 
+  testCompile 'commons-io:commons-io:1.4'
+  testCompile 'org.mockito:mockito-all:1.9.0'
 }
 
-apply plugin: 'nexus'
 
-group = 'com.kenshoo.facterj'
-version = '0.1'
+
+idea {
+    project {
+        jdkName = "1.7"
+        ipr {
+            withXml {  provider ->
+                provider.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
+            }
+        }
+    }
+}
