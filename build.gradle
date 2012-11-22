@@ -17,31 +17,13 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
 
-dependencies {
-}
+group = 'com.kenshoo.facterj'
+version = '0.1'
 
-apply plugin: 'maven'
 buildscript {
     repositories {
         mavenCentral()
     }
-}
-
-uploadArchives {
-    def password = project.hasProperty('password')? "$password":''
-    repositories {
-        mavenDeployer {
-            repository(url: "https://kenshoo.artifactoryonline.com/kenshoo/simple/libs-releases-local/") {
-                authentication(userName: "deployer", password: password)
-            }
-            snapshotRepository(url: "https://kenshoo.artifactoryonline.com/kenshoo/simple/libs-snapshots-local/") {
-                authentication(userName: "deployer", password: password)
-            }
-        }
-    }
-}
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -53,8 +35,7 @@ dependencies {
   testCompile 'org.mockito:mockito-all:1.9.0'
 }
 
-group = 'com.kenshoo.facterj'
-version = '0.1'
+
 
 idea {
     project {

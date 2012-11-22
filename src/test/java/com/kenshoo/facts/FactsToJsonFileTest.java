@@ -19,112 +19,88 @@ import com.google.gson.Gson;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.HashMap;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class FactsToJsonFileTest {
 
-    public static final File FACTS_LOCATION = new File(".");
-    public static final File ALTERNATIVE_LOCATION = new File("./alternative");
-    public static final File MAIN_LOCATION = new File("./main");
-    public static final String PROPS_FILE_NAME = "myProps";
-
+    public static final File FACTS_LOCATION = new File("./facter/facter.d");
+    public static final String FACTS_JSON_FILE_NAME = "myProps";
+    FactsToJsonFile factsToJsonFile;
     @Test
     public void writeFactsFile() throws Exception {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put("Bar", "Refaeli");
-        props.put("Hanin", "Zuabi");
+        props.put("Hanin", "Zoabi");
 
-        FactsToJsonFile factsToJsonFile = new FactsToJsonFile();
+        factsToJsonFile = prepareMock(props);
 
-        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, FACTS_LOCATION));
+        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME));
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
         Assert.assertEquals("Fact is different", factsFromFile.get("Bar"), "Refaeli");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zuabi");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zoabi");
+        verify(factsToJsonFile, times(1)).getExternalFactsFolder();
+        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME));
     }
 
     @Test
-    public void writeFactsFileAndOverideIt() throws Exception {
+    public void writeFactsFileAndOverrideIt() throws Exception {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put("Bar", "Refaeli");
         props.put("Hanin", "Zuabi");
-        FactsToJsonFile factsToJsonFile = new FactsToJsonFile();
-        factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, FACTS_LOCATION);
+        factsToJsonFile = prepareMock(props);
+        factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME);
 
         props.clear();
         props.put("Catherine", "McNeil");
         props.put("Iris", "Strubegger");
         props.put("Karen", "Elson");
 
-        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, FACTS_LOCATION));
+        File factsFile = factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME);
+        String jsonFacts = FileUtils.readFileToString(factsFile);
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
+        Assert.assertEquals("Facts file is not same as expected", factsFile, new File(FACTS_LOCATION, FACTS_JSON_FILE_NAME + FactsToJsonFile.JSON_FILE_EXTENSION));
+        Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 3);
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 3);
         Assert.assertEquals("Fact is different", factsFromFile.get("Iris"), "Strubegger");
         Assert.assertEquals("Fact is different", factsFromFile.get("Catherine"), "McNeil");
         Assert.assertEquals("Fact is different", factsFromFile.get("Karen"), "Elson");
+        verify(factsToJsonFile, times(2)).getExternalFactsFolder();
+        verify(factsToJsonFile, times(2)).toJsonFileFromMapFacts(any(HashMap.class), same(FACTS_JSON_FILE_NAME));
     }
 
-    @Test
-    public void writeFactsFileToMainLocation() throws Exception {
-        MAIN_LOCATION.mkdirs();
-        HashMap<String, String> props = new HashMap<String, String>();
-        props.put("Bar", "Refaeli");
-        props.put("Hanin", "Zuabi");
-
-        FactsToJsonFile factsToJsonFile = prepareMock(props);
-
-        File factsFile = factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, null);
-        String jsonFacts = FileUtils.readFileToString(factsFile);
-        HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
-
-        Assert.assertEquals(factsFile.getParentFile().getAbsoluteFile(), MAIN_LOCATION.getAbsoluteFile());
-        Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
-        Assert.assertEquals("Fact is different", factsFromFile.get("Bar"), "Refaeli");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zuabi");
-
-    }
 
     private FactsToJsonFile prepareMock(HashMap<String, String> props) {
         FactsToJsonFile factsToJsonFile = Mockito.mock(FactsToJsonFile.class);
-        Mockito.when(factsToJsonFile.getMainFacterFolder()).thenReturn(MAIN_LOCATION.getPath());
-        Mockito.when(factsToJsonFile.getAlternativeFactorFolder()).thenReturn(ALTERNATIVE_LOCATION.getPath());
-        Mockito.when(factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, null)).thenCallRealMethod();
+        Mockito.when(factsToJsonFile.getExternalFactsFolder()).thenReturn(FACTS_LOCATION);
+        Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME)).thenCallRealMethod();
         return factsToJsonFile;
     }
 
-    @Test
-    public void writeFactsFileToAlternativeLocation() throws Exception {
-        ALTERNATIVE_LOCATION.mkdirs();
-        HashMap<String, String> props = new HashMap<String, String>();
-        props.put("Bar", "Refaeli");
-        props.put("Hanin", "Zuabi");
-
-        FactsToJsonFile factsToJsonFile = prepareMock(props);
-
-        File factsFile = factsToJsonFile.toJsonFileFacts(props, PROPS_FILE_NAME, null);
-        String jsonFacts = FileUtils.readFileToString(factsFile);
-        HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
-
-        Assert.assertEquals(factsFile.getParentFile().getAbsoluteFile(), ALTERNATIVE_LOCATION.getAbsoluteFile());
-        Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
-        Assert.assertEquals("Fact is different", factsFromFile.get("Bar"), "Refaeli");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Hanin"), "Zuabi");
-
-    }
 
     @After
     public void afterEachTest() {
-        FileUtils.deleteQuietly(new File("." + File.separator + PROPS_FILE_NAME + FactsToJsonFile.JSON_FILE_EXTENSION));
-        FileUtils.deleteQuietly(MAIN_LOCATION);
-        FileUtils.deleteQuietly(ALTERNATIVE_LOCATION);
+        verifyNoMoreInteractions(factsToJsonFile);
+        FileUtils.deleteQuietly(FACTS_LOCATION);
     }
 
+
+    @Before
+    public void beforeEachTest() {
+        FACTS_LOCATION.mkdirs();
+    }
 
 }
