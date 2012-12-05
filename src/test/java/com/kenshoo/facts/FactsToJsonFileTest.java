@@ -66,7 +66,7 @@ public class FactsToJsonFileTest {
         props.clear();
         props.put("Fish", "Jawless");
         props.put("Monkey", "Gorilla");
-        props.put("Snake", "Manmba");
+        props.put("Snake", "Mamba");
 
         File factsFile = factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME);
         String jsonFacts = FileUtils.readFileToString(factsFile);
