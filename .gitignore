@@ -3,6 +3,7 @@
 *.class
 
 # Package Files #
+!gradle/*
 *.jar
 *.war
 *.ear
@@ -10,3 +11,5 @@
 *.iml
 *.ipr
 *.iws
+#exlude list
+!gradle-wrapper.jar
