@@ -45,13 +45,14 @@ public class FactsToJsonFileTest {
 
         factsToJsonFile = prepareMock(props,null);
 
-        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,null));
+        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME));
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
         Assert.assertEquals("Fact is different", factsFromFile.get("Dog"), "Labrador");
         Assert.assertEquals("Fact is different", factsFromFile.get("Cat"), "Lion");
         verify(factsToJsonFile, times(1)).getExternalFactsFolder();
+        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME));
         verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME),isNull(Set.class));
     }
 
@@ -90,6 +91,7 @@ public class FactsToJsonFileTest {
         FactsToJsonFile factsToJsonFile = Mockito.mock(FactsToJsonFile.class);
         Mockito.when(factsToJsonFile.getExternalFactsFolder()).thenReturn(FACTS_LOCATION);
         Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities)).thenCallRealMethod();
+        Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME)).thenCallRealMethod();
         return factsToJsonFile;
     }
 
