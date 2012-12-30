@@ -30,9 +30,7 @@ import java.util.Set;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 public class FactsToJsonFileTest {
 
@@ -45,17 +43,16 @@ public class FactsToJsonFileTest {
         props.put("Dog", "Labrador");
         props.put("Cat", "Lion");
 
-        Set<String> obfuscateEntities = new HashSet<String>();
-        factsToJsonFile = prepareMock(props,obfuscateEntities);
+        factsToJsonFile = prepareMock(props,null);
 
-        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities));
+        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,null));
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
         Assert.assertEquals("Fact is different", factsFromFile.get("Dog"), "Labrador");
         Assert.assertEquals("Fact is different", factsFromFile.get("Cat"), "Lion");
         verify(factsToJsonFile, times(1)).getExternalFactsFolder();
-        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME),same(obfuscateEntities));
+        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME),isNull(Set.class));
     }
 
     @Test
