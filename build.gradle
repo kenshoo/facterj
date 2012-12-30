@@ -27,15 +27,13 @@ buildscript {
 }
 
 dependencies {
-  compile 'com.google.code.gson:gson:2.2.2'
-  compile 'org.slf4j:slf4j-api:1.6.4'
-  compile 'junit:junit-dep:4.8.2'
+    compile 'com.google.code.gson:gson:2.2.2'
+    compile 'org.slf4j:slf4j-api:1.6.4'
+    compile 'junit:junit-dep:4.8.2'
 
-  testCompile 'commons-io:commons-io:1.4'
-  testCompile 'org.mockito:mockito-all:1.9.0'
+    testCompile 'commons-io:commons-io:1.4'
+    testCompile 'org.mockito:mockito-all:1.9.0'
 }
-
-
 
 idea {
     project {
@@ -47,21 +45,21 @@ idea {
         }
     }
 
-    uploadArchives {
-        def password = project.hasProperty('password')? "$password":''
-        repositories {
-            mavenDeployer {
-                repository(url: "https://kenshoo.artifactoryonline.com/kenshoo/simple/libs-releases-local/") {
-                    authentication(userName: "deployer", password: password)
-                }
-                snapshotRepository(url: "https://kenshoo.artifactoryonline.com/kenshoo/simple/libs-snapshots-local/") {
-                    authentication(userName: "deployer", password: password)
-                }
+}
+
+uploadArchives {
+    def password = project.hasProperty('password') ? "$password" : ''
+    repositories {
+        mavenDeployer {
+            repository(url: "https://kenshoo.artifactoryonline.com/kenshoo/simple/libs-releases-local/") {
+                authentication(userName: "deployer", password: password)
+            }
+            snapshotRepository(url: "https://kenshoo.artifactoryonline.com/kenshoo/simple/libs-snapshots-local/") {
+                authentication(userName: "deployer", password: password)
             }
         }
     }
 }
-
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.2'

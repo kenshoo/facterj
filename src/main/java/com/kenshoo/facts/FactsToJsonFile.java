@@ -24,10 +24,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 public class FactsToJsonFile {
     private static final String FACTER_EXTERNAL_FACTS_FOLDER = "/etc/facter/facts.d";  // /etc/puppetlabs/facter/facts.d
     public static final String JSON_FILE_EXTENSION = ".json";
+    public static final String OBFUSCATE_VALUE = "****";
     private Logger logger = LoggerFactory.getLogger(FactsToJsonFile.class);
 
     public File getExternalFactsFolder() {
@@ -38,9 +40,9 @@ public class FactsToJsonFile {
         return externalFactsFolder;
     }
 
-    public File toJsonFileFromMapFacts(Map facts, String fileName) {
+    public File toJsonFileFromMapFacts(Map facts, String fileName, Set<String> obfuscateEntities) {
         File factsFile = getFactsFile(fileName);
-
+        obfuscateEntities(obfuscateEntities,facts);
         String factsJson = new Gson().toJson(facts);
 
         FileWriter writer = null;
@@ -63,6 +65,16 @@ public class FactsToJsonFile {
 
     private File getFactsFile(String fileName) {
         return new File(getExternalFactsFolder(), fileName + JSON_FILE_EXTENSION);
+    }
+
+    private  void obfuscateEntities(Set<String> obfuscateEntities,Map<String,String> facts){
+        if(obfuscateEntities!=null){
+            for(String key:obfuscateEntities){
+                if(facts.containsKey(key)){
+                    facts.put(key, OBFUSCATE_VALUE);
+                }
+            }
+        }
     }
 }
 

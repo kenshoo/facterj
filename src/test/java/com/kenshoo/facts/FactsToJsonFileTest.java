@@ -25,6 +25,8 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.same;
@@ -43,16 +45,17 @@ public class FactsToJsonFileTest {
         props.put("Dog", "Labrador");
         props.put("Cat", "Lion");
 
-        factsToJsonFile = prepareMock(props);
+        Set<String> obfuscateEntities = new HashSet<String>();
+        factsToJsonFile = prepareMock(props,obfuscateEntities);
 
-        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME));
+        String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities));
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 2);
         Assert.assertEquals("Fact is different", factsFromFile.get("Dog"), "Labrador");
         Assert.assertEquals("Fact is different", factsFromFile.get("Cat"), "Lion");
         verify(factsToJsonFile, times(1)).getExternalFactsFolder();
-        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME));
+        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME),same(obfuscateEntities));
     }
 
     @Test
@@ -60,15 +63,18 @@ public class FactsToJsonFileTest {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put("Dog", "Labrador");
         props.put("Cat", "Lion");
-        factsToJsonFile = prepareMock(props);
-        factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME);
+
+        Set<String> obfuscateEntities = new HashSet<String>();
+        obfuscateEntities.add("Fish");
+        factsToJsonFile = prepareMock(props, obfuscateEntities);
+        factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities);
 
         props.clear();
         props.put("Fish", "Jawless");
         props.put("Monkey", "Gorilla");
         props.put("Snake", "Mamba");
 
-        File factsFile = factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME);
+        File factsFile = factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities);
         String jsonFacts = FileUtils.readFileToString(factsFile);
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
@@ -76,17 +82,17 @@ public class FactsToJsonFileTest {
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 3);
         Assert.assertEquals("Number of facts got from file is wrong", factsFromFile.size(), 3);
         Assert.assertEquals("Fact is different", factsFromFile.get("Monkey"), "Gorilla");
-        Assert.assertEquals("Fact is different", factsFromFile.get("Fish"), "Jawless");
+        Assert.assertEquals("Fact is different", factsFromFile.get("Fish"), FactsToJsonFile.OBFUSCATE_VALUE);
         Assert.assertEquals("Fact is different", factsFromFile.get("Snake"), "Mamba");
         verify(factsToJsonFile, times(2)).getExternalFactsFolder();
-        verify(factsToJsonFile, times(2)).toJsonFileFromMapFacts(any(HashMap.class), same(FACTS_JSON_FILE_NAME));
+        verify(factsToJsonFile, times(2)).toJsonFileFromMapFacts(any(HashMap.class), same(FACTS_JSON_FILE_NAME),same(obfuscateEntities));
     }
 
 
-    private FactsToJsonFile prepareMock(HashMap<String, String> props) {
+    private FactsToJsonFile prepareMock(HashMap<String, String> props, Set<String> obfuscateEntities) {
         FactsToJsonFile factsToJsonFile = Mockito.mock(FactsToJsonFile.class);
         Mockito.when(factsToJsonFile.getExternalFactsFolder()).thenReturn(FACTS_LOCATION);
-        Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME)).thenCallRealMethod();
+        Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities)).thenCallRealMethod();
         return factsToJsonFile;
     }
 
