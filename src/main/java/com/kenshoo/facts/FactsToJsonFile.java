@@ -41,12 +41,12 @@ public class FactsToJsonFile {
     }
 
     public File toJsonFileFromMapFacts(Map facts, String fileName) {
-        return toJsonFileFromMapFacts(facts,fileName,null);
+        return toJsonFileFromMapFacts(facts, fileName, null);
     }
 
     public File toJsonFileFromMapFacts(Map facts, String fileName, Set<String> obfuscateEntities) {
         File factsFile = getFactsFile(fileName);
-        obfuscateEntities(obfuscateEntities,facts);
+        obfuscateEntities(obfuscateEntities, facts);
         String factsJson = new Gson().toJson(facts);
 
         FileWriter writer = null;
@@ -71,10 +71,10 @@ public class FactsToJsonFile {
         return new File(getExternalFactsFolder(), fileName + JSON_FILE_EXTENSION);
     }
 
-    private  void obfuscateEntities(Set<String> obfuscateEntities,Map<String,String> facts){
-        if(obfuscateEntities!=null){
-            for(String key:obfuscateEntities){
-                if(facts.containsKey(key)){
+    private void obfuscateEntities(Set<String> obfuscateEntities, Map<String, String> facts) {
+        if (obfuscateEntities != null) {
+            for (String key : obfuscateEntities) {
+                if (facts.containsKey(key)) {
                     facts.put(key, OBFUSCATE_VALUE);
                 }
             }

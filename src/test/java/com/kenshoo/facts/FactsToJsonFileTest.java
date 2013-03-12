@@ -37,13 +37,14 @@ public class FactsToJsonFileTest {
     public static final File FACTS_LOCATION = new File("./facter/facter.d");
     public static final String FACTS_JSON_FILE_NAME = "myProps";
     FactsToJsonFile factsToJsonFile;
+
     @Test
     public void writeFactsFile() throws Exception {
         HashMap<String, String> props = new HashMap<String, String>();
         props.put("Dog", "Labrador");
         props.put("Cat", "Lion");
 
-        factsToJsonFile = prepareMock(props,null);
+        factsToJsonFile = prepareMock(props, null);
 
         String jsonFacts = FileUtils.readFileToString(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME));
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
@@ -53,7 +54,7 @@ public class FactsToJsonFileTest {
         Assert.assertEquals("Fact is different", factsFromFile.get("Cat"), "Lion");
         verify(factsToJsonFile, times(1)).getExternalFactsFolder();
         verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME));
-        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME),isNull(Set.class));
+        verify(factsToJsonFile, times(1)).toJsonFileFromMapFacts(same(props), same(FACTS_JSON_FILE_NAME), isNull(Set.class));
     }
 
     @Test
@@ -65,14 +66,14 @@ public class FactsToJsonFileTest {
         Set<String> obfuscateEntities = new HashSet<String>();
         obfuscateEntities.add("Fish");
         factsToJsonFile = prepareMock(props, obfuscateEntities);
-        factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities);
+        factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME, obfuscateEntities);
 
         props.clear();
         props.put("Fish", "Jawless");
         props.put("Monkey", "Gorilla");
         props.put("Snake", "Mamba");
 
-        File factsFile = factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities);
+        File factsFile = factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME, obfuscateEntities);
         String jsonFacts = FileUtils.readFileToString(factsFile);
         HashMap<String, String> factsFromFile = new Gson().fromJson(jsonFacts, HashMap.class);
 
@@ -83,14 +84,14 @@ public class FactsToJsonFileTest {
         Assert.assertEquals("Fact is different", factsFromFile.get("Fish"), FactsToJsonFile.OBFUSCATE_VALUE);
         Assert.assertEquals("Fact is different", factsFromFile.get("Snake"), "Mamba");
         verify(factsToJsonFile, times(2)).getExternalFactsFolder();
-        verify(factsToJsonFile, times(2)).toJsonFileFromMapFacts(any(HashMap.class), same(FACTS_JSON_FILE_NAME),same(obfuscateEntities));
+        verify(factsToJsonFile, times(2)).toJsonFileFromMapFacts(any(HashMap.class), same(FACTS_JSON_FILE_NAME), same(obfuscateEntities));
     }
 
 
     private FactsToJsonFile prepareMock(HashMap<String, String> props, Set<String> obfuscateEntities) {
         FactsToJsonFile factsToJsonFile = Mockito.mock(FactsToJsonFile.class);
         Mockito.when(factsToJsonFile.getExternalFactsFolder()).thenReturn(FACTS_LOCATION);
-        Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME,obfuscateEntities)).thenCallRealMethod();
+        Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME, obfuscateEntities)).thenCallRealMethod();
         Mockito.when(factsToJsonFile.toJsonFileFromMapFacts(props, FACTS_JSON_FILE_NAME)).thenCallRealMethod();
         return factsToJsonFile;
     }
