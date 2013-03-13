@@ -5,6 +5,7 @@ Utility to generate [facter](http://puppetlabs.com/puppet/related-projects/facte
 Gets a map of facts and creats from the map a json file located under "/etc/facter/facts.d".
 
 example: new FactsToJsonFile(map,jsonFileNmae,setOfFactsToobfuscate)
+
 result : a new file "/etc/facter/facts.d/jsonFileNmae.json" (always override existing)
 
 ## License
