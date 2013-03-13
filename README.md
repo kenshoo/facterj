@@ -2,11 +2,11 @@ facterj
 =======
 
 Utility to generate [facter](http://puppetlabs.com/puppet/related-projects/facter/) facts from Java application.
-Gets a map of facts and creats from the map a json file located under "/etc/facter/facts.d".
+Gets a map of facts and generates a json file located under "/etc/facter/facts.d".
 
-example: new FactsToJsonFile(map,jsonFileNmae,setOfFactsToobfuscate)
-
-result : a new file "/etc/facter/facts.d/jsonFileNmae.json" (always override existing)
+## Usage
+new FactsToJsonFile(map, jsonFileNmae, setOfFactsToObfuscate)
+returns a new File "/etc/facter/facts.d/<jsonFileNmae>.json" (always override existing)
 
 ## License
 This code is released under the Apache Public License 2.0.
