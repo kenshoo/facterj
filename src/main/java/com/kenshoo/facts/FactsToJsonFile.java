@@ -40,14 +40,14 @@ public class FactsToJsonFile {
         return externalFactsFolder;
     }
 
-    public File toJsonFileFromMapFacts(Map facts, String fileName) {
+    public File toJsonFileFromMapFacts(Map<String,String> facts, String fileName) {
         return toJsonFileFromMapFacts(facts, fileName, null);
     }
 
-    public File toJsonFileFromMapFacts(Map facts, String fileName, Set<String> obfuscateEntities) {
+    public File toJsonFileFromMapFacts(Map<String,String> facts, String fileName, Set<String> obfuscateEntities) {
         File factsFile = getFactsFile(fileName);
         obfuscateEntities(obfuscateEntities, facts);
-        String factsJson = new Gson().toJson(facts);
+        String factsJson = new Gson().toJson(facts,Map.class);
 
         FileWriter writer = null;
         try {
